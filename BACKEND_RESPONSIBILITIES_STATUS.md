@@ -89,6 +89,3 @@
 - The project stores `available_seats` but availability is computed live using confirmed bookings + active holds.
 
 ---
-Generated file: `BACKEND_RESPONSIBILITIES_STATUS.md` at project root.
-
-If you want, I can convert this to a prioritized Jira-style task list, or add estimated story points/ETA for each remaining item. Which would you prefer?
