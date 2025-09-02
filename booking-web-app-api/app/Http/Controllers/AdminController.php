@@ -13,14 +13,49 @@ class AdminController extends Controller
     // Get all users
     public function users()
     {
-        $users = User::role('user')->get();
+        
+        // Get all users with their roles, excluding admins
+        $users = User::with('roles')
+            ->whereDoesntHave('roles', function($query) {
+                $query->where('name', 'admin');
+            })
+            ->orWhereDoesntHave('roles')
+            ->get()
+            ->map(function($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'phone' => $user->phone,
+                    'role' => optional($user->roles->first())->name ?? 'user',
+                    'created_at' => $user->created_at
+                ];
+            });
+
         return response()->json($users);
     }
 
     // Get all merchants
     public function merchants()
     {
-        $merchants = Merchant::with('user')->get();
+        $merchants = Merchant::with('user.roles')->get()->map(function($merchant) {
+            return [
+                'id' => $merchant->id,
+                'business_name' => $merchant->business_name,
+                'category' => $merchant->category,
+                'address' => $merchant->address,
+                'status' => $merchant->status,
+                'created_at' => $merchant->created_at,
+                'user' => [
+                    'id' => $merchant->user->id,
+                    'name' => $merchant->user->name,
+                    'email' => $merchant->user->email,
+                    'phone' => $merchant->user->phone,
+                    'role' => optional($merchant->user->roles->first())->name ?? 'merchant'
+                ]
+            ];
+        });
+
         return response()->json($merchants);
     }
 
