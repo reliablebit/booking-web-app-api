@@ -19,9 +19,10 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users',
             'phone' => 'required|string|unique:users',
-            'password' => 'required|string|min:6',
-            'role' => 'required|string|in:user,merchant,admin'
+            'password' => 'required|string|min:6'
+            // Removed role validation - users get 'user' role by default
         ]);
+
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -34,14 +35,20 @@ class AuthController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        // Assign role using Spatie
-        $user->assignRole($request->role);
+        // Always assign 'user' role for regular registration
+        $user->assignRole('user');
 
         $token = JWTAuth::fromUser($user);
 
         return response()->json([
             'message' => 'User registered successfully',
-            'user' => $user,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'role' => 'user'
+            ],
             'token' => $token
         ]);
     }
