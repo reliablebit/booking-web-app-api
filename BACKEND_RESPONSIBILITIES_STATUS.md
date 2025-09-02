@@ -89,3 +89,31 @@
 - The project stores `available_seats` but availability is computed live using confirmed bookings + active holds.
 
 ---
+
+
+## Known Issues & Limitations
+
+### Critical Issues
+1. **Payment Integration**: Uses test keys, no real Stripe configuration
+2. **Route Duplication**: `additional_api_routes.php` has overlapping routes
+3. **QR Verification**: Incomplete validation logic
+4. **Fraud Detection**: Placeholder VPN/proxy checks
+
+### Logic Issues
+1. **Race Conditions**: Inconsistent use of database locks
+2. **Hold Validation**: Incomplete hold expiration checks
+3. **Seat Availability**: Mixed static/dynamic availability tracking
+4. **Error Handling**: Inconsistent error responses
+
+### Security Concerns
+1. **No Rate Limiting**: Vulnerable to API abuse
+2. **Input Validation**: Some endpoints lack comprehensive validation
+3. **File Security**: QR code storage lacks proper validation
+
+### Missing Features
+1. **Email Notifications**: No booking confirmations
+2. **Background Jobs**: No cleanup schedulers
+3. **Audit Logging**: No activity tracking
+4. **Real-time Updates**: No WebSocket support
+
+---
