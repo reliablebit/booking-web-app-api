@@ -1,7 +1,3 @@
-# Backend Responsibilities — Done vs Remaining
-
-This document summarizes the backend responsibilities extracted from your report and maps each item to its current implementation status in the repository (as of Aug 29, 2025).
-
 ## Checklist (requirements)
 - User Panel: auth, search, bookings, tickets, OTP, payments
 - Merchant Panel: merchant auth, listings CRUD, bookings for merchant, stats, availability
