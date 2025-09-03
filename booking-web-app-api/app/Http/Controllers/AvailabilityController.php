@@ -8,6 +8,7 @@ use App\Models\BookingLock;
 use App\Services\BookingLockService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use OpenApi\Annotations as OA;
 
 class AvailabilityController extends Controller
 {
@@ -91,6 +92,24 @@ class AvailabilityController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/availability/{listingId}",
+     *     summary="Get listing availability",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="listingId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Availability information",
+     *         @OA\JsonContent(type="object")
+     *     )
+     * )
+     */
     // Original method kept for backward compatibility
     public function show($listingId)
     {

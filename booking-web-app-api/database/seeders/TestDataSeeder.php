@@ -2,12 +2,13 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Listing;
+use App\Models\Merchant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use App\Models\Merchant;
-use App\Models\Listing;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class TestDataSeeder extends Seeder
 {
@@ -16,10 +17,16 @@ class TestDataSeeder extends Seeder
      */
     public function run(): void
     {
+        // Disable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
         // Clear existing data
         User::truncate();
         Merchant::truncate();
         Listing::truncate();
+
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // Common password for all users
         $password = Hash::make('12345678');
@@ -59,7 +66,9 @@ class TestDataSeeder extends Seeder
         ];
 
         foreach ($users as $userData) {
-            User::create($userData);
+            $user = User::create($userData);
+            // Assign 'user' role to regular users
+            $user->assignRole('user');
         }
 
         // Create merchant users
@@ -93,6 +102,8 @@ class TestDataSeeder extends Seeder
         $merchants = [];
         foreach ($merchantUsers as $merchantUserData) {
             $user = User::create($merchantUserData);
+            // Assign 'merchant' role to merchant users
+            $user->assignRole('merchant');
 
             $merchants[] = Merchant::create([
                 'user_id' => $user->id,

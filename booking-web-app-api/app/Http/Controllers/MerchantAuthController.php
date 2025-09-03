@@ -8,9 +8,36 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use OpenApi\Annotations as OA;
 
 class MerchantAuthController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/merchant/register",
+     *     summary="Register a new merchant",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="John Doe"),
+     *             @OA\Property(property="email", type="string", format="email", example="merchant@example.com"),
+     *             @OA\Property(property="phone", type="string", example="+1234567890"),
+     *             @OA\Property(property="password", type="string", example="password123"),
+     *             @OA\Property(property="company_name", type="string", example="ABC Transport"),
+     *             @OA\Property(property="license_number", type="string", example="LIC123456")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Merchant registered successfully",
+     *         @OA\JsonContent(type="object")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation errors"
+     *     )
+     * )
+     */
     public function register(Request $request)
     {
         try {

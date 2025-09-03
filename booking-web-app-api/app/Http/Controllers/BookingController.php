@@ -18,9 +18,29 @@ use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Writer;
+use OpenApi\Annotations as OA;
 
 class BookingController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/bookings",
+     *     summary="Create booking hold",
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="listing_id", type="integer", example=1),
+     *             @OA\Property(property="seat_number", type="string", example="A1")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Booking hold created",
+     *         @OA\JsonContent(type="object")
+     *     )
+     * )
+     */
     // STEP A: Create a HOLD (lock) for a seat (or free seating)
     public function store(Request $request)
     {
@@ -99,6 +119,32 @@ class BookingController extends Controller
         });
     }
 
+    /**
+     * @OA\Post(
+     *     path="/bookings/{id}/confirm",
+     *     summary="Confirm booking",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Booking confirmed",
+     *         @OA\JsonContent(type="object")
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Booking was cancelled"
+     *     )
+     * )
+     */
     // STEP B: Confirm booking
     public function confirm($id)
     {
@@ -180,6 +226,32 @@ class BookingController extends Controller
         });
     }
 
+    /**
+     * @OA\Post(
+     *     path="/bookings/{id}/cancel",
+     *     summary="Cancel booking",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Booking cancelled",
+     *         @OA\JsonContent(type="object")
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Already cancelled"
+     *     )
+     * )
+     */
     // STEP C: Cancel booking
     public function cancel($id)
     {
@@ -208,6 +280,27 @@ class BookingController extends Controller
         });
     }
 
+    /**
+     * @OA\Get(
+     *     path="/bookings/{id}/ticket",
+     *     summary="Download booking ticket QR code",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="QR code file download"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Ticket not found"
+     *     )
+     * )
+     */
     // STEP E: Download QR image
     public function ticketDownload($id)
     {
@@ -225,6 +318,28 @@ class BookingController extends Controller
 
         return Response::download($fullPath, "ticket-{$booking->booking_ref}.svg");
     }
+    /**
+     * @OA\Get(
+     *     path="/bookings/{id}",
+     *     summary="Get booking details",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Booking details",
+     *         @OA\JsonContent(type="object")
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     )
+     * )
+     */
     public function show($id)
     {
         $booking = Booking::with('listing','ticket')
